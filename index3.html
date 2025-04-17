@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ranking Campeonato Gamer</title>
+    <style>
+        :root {
+            --primary-color: #00ff88;
+            --primary-dark: #00cc6a;
+            --danger-color: #ff4444;
+            --danger-dark: #cc0000;
+            --warning-color: #ffaa00;
+            --dark-bg: #121212;
+            --card-bg: #1e1e1e;
+            --input-bg: #2d2d2d;
+            --border-color: #444;
+            --text-light: #aaa;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--dark-bg);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        
+        /* Cards */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        /* Formulários */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-light);
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: #fff;
+        }
+        
+        /* Botões */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--dark-bg);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: var(--danger-dark);
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: var(--dark-bg);
+        }
+        
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        /* Tabelas */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            background-color: var(--primary-color);
+            color: var(--dark-bg);
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .table tr:nth-child(even) {
+            background-color: #252525;
+        }
+        
+        .table tr:hover {
+            background-color: #333;
+        }
+        
+        /* Layout */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .col {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        /* Navbar */
+        .navbar {
+            background-color: var(--card-bg);
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Utilitários */
+        .text-center {
+            text-align: center;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .admin-only {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 10px;
+        }
+        
+        /* Ícones de ranking */
+        .player-rank {
+            display: inline-block;
+            width: 25px;
+            text-align: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .gold {
+            color: gold;
+        }
+        
+        .silver {
+            color: silver;
+        }
+        
+        .bronze {
+            color: #cd7f32;
+        }
+        
+        /* Mensagens */
+        .alert {
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .alert-success {
+            background-color: #003311;
+            color: var(--primary-color);
+        }
+        
+        .alert-error {
+            background-color: #330000;
+            color: var(--danger-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div id="login-screen" class="container">
+        <div class="card" style="max-width: 500px; margin: 50px auto;">
+            <h1 class="text-center">Login Administrativo</h1>
+            <div id="login-message"></div>
+            
+            <div class="form-group">
+                <label for="login-username">Usuário</label>
+                <input type="text" id="login-username" placeholder="Digite seu usuário">
+            </div>
+            
+            <div class="form-group">
+                <label for="login-password">Senha</label>
+                <input type="password" id="login-password" placeholder="Digite sua senha">
+            </div>
+            
+            <button class="btn btn-primary" onclick="login()" style="width: 100%;">Entrar</button>
+            
+            <div class="text-center" style="margin-top: 15px;">
+                <a href="#" onclick="showForgotPasswordScreen()">Esqueci minha senha</a>
+                <span> | </span>
+                <a href="#" onclick="showRegisterScreen()">Cadastrar novo administrador</a>
+                <span> | </span>
+                <a href="#" onclick="showViewScreen()">Entrar como visitante</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tela de Cadastro de Administrador -->
+    <div id="register-screen" class="container hidden">
+        <div class="card" style="max-width: 500px; margin: 50px auto;">
+            <h1 class="text-center">Cadastrar Administrador</h1>
+            <div id="register-message"></div>
+            
+            <div class="form-group">
+                <label for="register-username">Usuário</label>
+                <input type="text" id="register-username" placeholder="Digite um nome de usuário">
+            </div>
+            
+            <div class="form-group">
+                <label for="register-password">Senha</label>
+                <input type="password" id="register-password" placeholder="Digite uma senha">
+            </div>
+            
+            <div class="form-group">
+                <label for="register-confirm-password">Confirmar Senha</label>
+                <input type="password" id="register-confirm-password" placeholder="Confirme a senha">
+            </div>
+            
+            <button class="btn btn-primary" onclick="registerAdmin()" style="width: 100%;">Cadastrar</button>
+            
+            <div class="text-center" style="margin-top: 15px;">
+                <a href="#" onclick="showLoginScreen()">Voltar para o login</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tela de Recuperação de Senha -->
+    <div id="forgot-password-screen" class="container hidden">
+        <div class="card" style="max-width: 500px; margin: 50px auto;">
+            <h1 class="text-center">Redefinir Senha</h1>
+            <div id="forgot-message"></div>
+            
+            <div class="form-group">
+                <label for="forgot-username">Usuário</label>
+                <input type="text" id="forgot-username" placeholder="Digite seu usuário">
+            </div>
+            
+            <div class="form-group">
+                <label for="forgot-new-password">Nova Senha</label>
+                <input type="password" id="forgot-new-password" placeholder="Digite a nova senha">
+            </div>
+            
+            <div class="form-group">
+                <label for="forgot-confirm-password">Confirmar Nova Senha</label>
+                <input type="password" id="forgot-confirm-password" placeholder="Confirme a nova senha">
+            </div>
+            
+            <button class="btn btn-primary" onclick="resetPassword()" style="width: 100%;">Redefinir Senha</button>
+            
+            <div class="text-center" style="margin-top: 15px;">
+                <a href="#" onclick="showLoginScreen()">Voltar para o login</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tela de Administrador -->
+    <div id="admin-screen" class="container hidden">
+        <div class="navbar">
+            <h2>Ranking do Campeonato - Administração</h2>
+            <div class="nav-links">
+                <a href="#" onclick="showViewScreen()">Visualização Pública</a>
+                <a href="#" onclick="logout()">Sair</a>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col">
+                <div class="card admin-only">
+                    <h3>Adicionar Nova Dupla</h3>
+                    
+                    <div class="form-group">
+                        <label for="player1">Jogador 1</label>
+                        <input type="text" id="player1" placeholder="Nome do jogador 1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="player2">Jogador 2</label>
+                        <input type="text" id="player2" placeholder="Nome do jogador 2">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="teamName">Nome da Dupla (Opcional)</label>
+                        <input type="text" id="teamName" placeholder="Nome da dupla">
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="addTeam()">Adicionar Dupla</button>
+                </div>
+                
+                <div class="card">
+                    <h3>Gerenciar Administradores</h3>
+                    <button class="btn btn-warning" onclick="showRegisterScreen()">Cadastrar Novo Admin</button>
+                </div>
+            </div>
+            
+            <div class="col">
+                <div class="card">
+                    <h3>Ranking de Duplas</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Posição</th>
+                                <th>Dupla</th>
+                                <th>Jogadores</th>
+                                <th>Pontos</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ranking-body">
+                            <!-- As duplas serão adicionadas aqui via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>Ranking (Top 10)</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Posição</th>
+                        <th>Jogador</th>
+                        <th>Pontos</th>
+                        <th>Dupla</th>
+                    </tr>
+                </thead>
+                <tbody id="players-ranking-body">
+                    <!-- Os jogadores serão adicionados aqui via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Tela de Visualização Pública -->
+    <div id="view-screen" class="container hidden">
+        <div class="navbar">
+            <h2>Ranking do Campeonato Gamer</h2>
+            <div class="nav-links">
+                <a href="#" onclick="showLoginScreen()">Área de Administração</a>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <h3>Ranking de Duplas</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Posição</th>
+                                <th>Dupla</th>
+                                <th>Jogadores</th>
+                                <th>Pontos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="view-ranking-body">
+                            <!-- As duplas serão adicionadas aqui via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="col">
+                <div class="card">
+                    <h3>Ranking (Top 10)</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Posição</th>
+                                <th>Jogador</th>
+                                <th>Pontos</th>
+                                <th>Dupla</th>
+                            </tr>
+                        </thead>
+                        <tbody id="view-players-ranking-body">
+                            <!-- Os jogadores serão adicionados aqui via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados da aplicação
+        let teams = [];
+        let admins = [
+            { username: "admin", password: "admin123" }
+        ];
+        let currentAdmin = null;
+        
+        // Funções para navegação entre telas
+        function showLoginScreen() {
+            hideAllScreens();
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('login-username').focus();
+        }
+        
+        function showRegisterScreen() {
+            hideAllScreens();
+            document.getElementById('register-screen').classList.remove('hidden');
+            document.getElementById('register-username').focus();
+            clearRegisterForm();
+        }
+        
+        function showForgotPasswordScreen() {
+            hideAllScreens();
+            document.getElementById('forgot-password-screen').classList.remove('hidden');
+            document.getElementById('forgot-username').focus();
+            clearForgotForm();
+        }
+        
+        function showAdminScreen() {
+            hideAllScreens();
+            document.getElementById('admin-screen').classList.remove('hidden');
+            updateRanking();
+        }
+        
+        function showViewScreen() {
+            hideAllScreens();
+            document.getElementById('view-screen').classList.remove('hidden');
+            updateViewRanking();
+        }
+        
+        function hideAllScreens() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('register-screen').classList.add('hidden');
+            document.getElementById('forgot-password-screen').classList.add('hidden');
+            document.getElementById('admin-screen').classList.add('hidden');
+            document.getElementById('view-screen').classList.add('hidden');
+        }
+        
+        // Funções de autenticação
+        function login() {
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+            
+            const admin = admins.find(a => a.username === username && a.password === password);
+            
+            if (admin) {
+                currentAdmin = admin;
+                showAdminScreen();
+            } else {
+                showMessage('login-message', 'Credenciais inválidas!', 'error');
+            }
+        }
+        
+        function logout() {
+            currentAdmin = null;
+            showLoginScreen();
+        }
+        
+        function registerAdmin() {
+            const username = document.getElementById('register-username').value.trim();
+            const password = document.getElementById('register-password').value.trim();
+            const confirmPassword = document.getElementById('register-confirm-password').value.trim();
+            
+            if (!username || !password || !confirmPassword) {
+                showMessage('register-message', 'Preencha todos os campos!', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showMessage('register-message', 'As senhas não coincidem!', 'error');
+                return;
+            }
+            
+            if (admins.some(a => a.username === username)) {
+                showMessage('register-message', 'Usuário já existe!', 'error');
+                return;
+            }
+            
+            admins.push({ username, password });
+            showMessage('register-message', 'Administrador cadastrado com sucesso!', 'success');
+            clearRegisterForm();
+            setTimeout(() => showLoginScreen(), 1500);
+        }
+        
+        function resetPassword() {
+            const username = document.getElementById('forgot-username').value.trim();
+            const newPassword = document.getElementById('forgot-new-password').value.trim();
+            const confirmPassword = document.getElementById('forgot-confirm-password').value.trim();
+            
+            if (!username || !newPassword || !confirmPassword) {
+                showMessage('forgot-message', 'Preencha todos os campos!', 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showMessage('forgot-message', 'As senhas não coincidem!', 'error');
+                return;
+            }
+            
+            const adminIndex = admins.findIndex(a => a.username === username);
+            
+            if (adminIndex === -1) {
+                showMessage('forgot-message', 'Usuário não encontrado!', 'error');
+                return;
+            }
+            
+            admins[adminIndex].password = newPassword;
+            showMessage('forgot-message', 'Senha redefinida com sucesso!', 'success');
+            clearForgotForm();
+            setTimeout(() => showLoginScreen(), 1500);
+        }
+        
+        // Funções para manipulação de times
+        function addTeam() {
+            const player1 = document.getElementById('player1').value.trim();
+            const player2 = document.getElementById('player2').value.trim();
+            const teamName = document.getElementById('teamName').value.trim();
+            
+            if (!player1 || !player2) {
+                alert('Por favor, insira os nomes de ambos os jogadores!');
+                return;
+            }
+            
+            if (isPlayerInTeam(player1)) {
+                alert(`O jogador ${player1} já está em outra dupla!`);
+                return;
+            }
+            
+            if (isPlayerInTeam(player2)) {
+                alert(`O jogador ${player2} já está em outra dupla!`);
+                return;
+            }
+            
+            const displayName = teamName || `${player1} & ${player2}`;
+            
+            teams.push({
+                name: displayName,
+                player1: player1,
+                player2: player2,
+                points: 10,
+                wins: 0,
+                losses: 0
+            });
+            
+            document.getElementById('player1').value = '';
+            document.getElementById('player2').value = '';
+            document.getElementById('teamName').value = '';
+            
+            updateRanking();
+            updateViewRanking();
+        }
+        
+        function isPlayerInTeam(playerName) {
+            return teams.some(team => 
+                team.player1.toLowerCase() === playerName.toLowerCase() || 
+                team.player2.toLowerCase() === playerName.toLowerCase()
+            );
+        }
+        
+        function updateTeamPoints(index, result) {
+            if (result === 'win') {
+                teams[index].points += 10;
+                teams[index].wins += 1;
+            } else {
+                teams[index].points = Math.max(0, teams[index].points - 10);
+                teams[index].losses += 1;
+            }
+            
+            updateRanking();
+            updateViewRanking();
+        }
+        
+        function removeTeam(index) {
+            if (confirm('Tem certeza que deseja remover esta dupla?')) {
+                teams.splice(index, 1);
+                updateRanking();
+                updateViewRanking();
+            }
+        }
+        
+        // Funções para atualizar rankings
+        function updateRanking() {
+            teams.sort((a, b) => b.points - a.points);
+            
+            const tbody = document.getElementById('ranking-body');
+            tbody.innerHTML = '';
+            
+            teams.forEach((team, index) => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${index + 1}º</td>
+                    <td>${team.name}</td>
+                    <td>${team.player1} e ${team.player2}</td>
+                    <td>${team.points}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="updateTeamPoints(${index}, 'win')">Vitória (+10)</button>
+                        <button class="btn btn-danger btn-sm" onclick="updateTeamPoints(${index}, 'lose')">Derrota (-10)</button>
+                        <button class="btn btn-danger btn-sm" onclick="removeTeam(${index})">Remover</button>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+            
+            updatePlayersRanking();
+        }
+        
+        function updateViewRanking() {
+            teams.sort((a, b) => b.points - a.points);
+            
+            const tbody = document.getElementById('view-ranking-body');
+            tbody.innerHTML = '';
+            
+            teams.forEach((team, index) => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${index + 1}º</td>
+                    <td>${team.name}</td>
+                    <td>${team.player1} e ${team.player2}</td>
+                    <td>${team.points}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+            
+            updateViewPlayersRanking();
+        }
+        
+        function updatePlayersRanking() {
+            let players = [];
+            
+            teams.forEach(team => {
+                players.push({ name: team.player1, points: team.points, team: team.name });
+                players.push({ name: team.player2, points: team.points, team: team.name });
+            });
+            
+            players.sort((a, b) => b.points - a.points);
+            
+            const tbody = document.getElementById('players-ranking-body');
+            tbody.innerHTML = '';
+            
+            players.slice(0, 10).forEach((player, index) => {
+                const row = document.createElement('tr');
+                
+                let rankIcon = '';
+                if (index === 0) rankIcon = '<span class="player-rank gold">🥇</span>';
+                else if (index === 1) rankIcon = '<span class="player-rank silver">🥈</span>';
+                else if (index === 2) rankIcon = '<span class="player-rank bronze">🥉</span>';
+                else rankIcon = `<span class="player-rank">${index + 1}º</span>`;
+                
+                row.innerHTML = `
+                    <td>${rankIcon}</td>
+                    <td>${player.name}</td>
+                    <td>${player.points}</td>
+                    <td>${player.team}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        function updateViewPlayersRanking() {
+            let players = [];
+            
+            teams.forEach(team => {
+                players.push({ name: team.player1, points: team.points, team: team.name });
+                players.push({ name: team.player2, points: team.points, team: team.name });
+            });
+            
+            players.sort((a, b) => b.points - a.points);
+            
+            const tbody = document.getElementById('view-players-ranking-body');
+            tbody.innerHTML = '';
+            
+            players.slice(0, 10).forEach((player, index) => {
+                const row = document.createElement('tr');
+                
+                let rankIcon = '';
+                if (index === 0) rankIcon = '<span class="player-rank gold">🥇</span>';
+                else if (index === 1) rankIcon = '<span class="player-rank silver">🥈</span>';
+                else if (index === 2) rankIcon = '<span class="player-rank bronze">🥉</span>';
+                else rankIcon = `<span class="player-rank">${index + 1}º</span>`;
+                
+                row.innerHTML = `
+                    <td>${rankIcon}</td>
+                    <td>${player.name}</td>
+                    <td>${player.points}</td>
+                    <td>${player.team}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Funções auxiliares
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+        }
+        
+        function clearRegisterForm() {
+            document.getElementById('register-username').value = '';
+            document.getElementById('register-password').value = '';
+            document.getElementById('register-confirm-password').value = '';
+            document.getElementById('register-message').innerHTML = '';
+        }
+        
+        function clearForgotForm() {
+            document.getElementById('forgot-username').value = '';
+            document.getElementById('forgot-new-password').value = '';
+            document.getElementById('forgot-confirm-password').value = '';
+            document.getElementById('forgot-message').innerHTML = '';
+        }
+        
+        // Inicialização
+        showLoginScreen();
+    </script>
+</body>
+</html>
